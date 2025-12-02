@@ -9,7 +9,7 @@
 
 
 ## 1. 🔥 Updates
-- __[2025.3.20]__: Release the [code](https://github.com/yhlleo/EfficientMoE) of DSMoE and JiTMoE.
+- __[2025.12.2]__: Release the [code](https://github.com/yhlleo/EfficientMoE) of DSMoE and JiTMoE.
 
 
 ## 2. 📖 Introduction
