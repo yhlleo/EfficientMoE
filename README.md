@@ -12,26 +12,30 @@
 - __[2025.3.20]__: Release the [code](https://github.com/yhlleo/EfficientMoE) of DSMoE and JiTMoE.
 
 
-## 2. Preparation
+## 2. 📖 Introduction
 
-### 2.1 Dataset
+We release the MoE Transformer that can be applied to both latent and pixel-space diffusion frameworks, employing DeepSeek-style expert modules, alternative intermediate widths, varying expert counts, and enhanced attention positional encodings. The models are already relased to Huggingface. The source codes are coming soon!<br>
+
+## 3. Preparation
+
+### 3.1 Dataset
 Download [ImageNet](http://image-net.org/download) dataset, and place it in your `IMAGENET_PATH`.
 
-### 2.2 Installation
+### 3.2 Installation
 
 TODO
 
-### 2.3 Training
+### 3.3 Training
 
 TODO
 
-### 2.4 Evaluation
+### 3.4 Evaluation
 
 TODO
 
-## 3. Main results
+## 4. Main results
 
-### 3.1 Latent diffusion framework
+### 4.1 Latent diffusion framework
 
  - Ours DSMoE v.s. [DiffMoE](https://arxiv.org/pdf/2503.14487) on 700K training steps with CFG = 1.0 (* refers to the reported results in the official paper):
 
@@ -64,7 +68,7 @@ TODO
 |DSMoE-3B-E16|965M|2.38|304.93|
 
 
-### 3.2 Pixel-space diffusion framework 
+### 4.2 Pixel-space diffusion framework 
 
 -  Ours JiTMoE v.s. [JiT](https://arxiv.org/pdf/2511.13720) on 200 training epochs with CFG interval (* refers to the reported results in the official paper):
 
@@ -76,10 +80,10 @@ TODO
 |JiTMoE-L/16-E16|465M|3.10| 311.34|
 
 
-## 4. Acknowledgements
+## 5. Acknowledgements
 A large portion of codes in this repo is based on [DiffMoE](https://github.com/KlingTeam/DiffMoE), [JiT](https://github.com/LTH14/JiT), [DeepSeekMoE](https://github.com/deepseek-ai/DeepSeek-MoE)
 
-## 5. 🌟 Citation
+## 6. 🌟 Citation
 
 ```
 @article{liu2025efficient,
