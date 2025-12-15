@@ -14,7 +14,7 @@
 
 ## 2. 📖 Introduction
 
-We release the MoE Transformer that can be applied to both latent and pixel-space diffusion frameworks, employing DeepSeek-style expert modules, alternative intermediate widths, varying expert counts, and enhanced attention positional encodings. The models are already relased to Huggingface. The source codes are coming soon!<br>
+We release the MoE Transformer that can be applied to both latent and pixel-space diffusion frameworks, employing DeepSeek-style expert modules, alternative intermediate widths, varying expert counts, and enhanced attention positional encodings. The models are already relased to Huggingface. <br>
 
 ## 3. Preparation
 
