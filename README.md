@@ -9,7 +9,7 @@
 
 
 ## 1. 🔥 Updates
-- __[2025.12.2]__: Release the codes of [DSMoE](./DSMoE) and [JiTMoE](./JiTMoE).
+- __[2025.12.15]__: Release the codes of [DSMoE](./DSMoE) and [JiTMoE](./JiTMoE).
 
 
 ## 2. 📖 Introduction
