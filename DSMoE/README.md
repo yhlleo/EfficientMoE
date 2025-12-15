@@ -1,6 +1,6 @@
 ### Training of DSMoE
 
-After configuring the environment, we can start training according to privide scripts:
+After configuring the environment, we can start training according to the privided scripts:
 
 | Script                | Training Model |
 |----------------------------|-------------------------|
