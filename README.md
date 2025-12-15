@@ -9,7 +9,7 @@
 
 
 ## 1. 🔥 Updates
-- __[2025.12.2]__: Release the [code](https://github.com/yhlleo/EfficientMoE) of [DSMoE](./DSMoE) and [JiTMoE](./JiTMoE).
+- __[2025.12.2]__: Release the codes of [DSMoE](./DSMoE) and [JiTMoE](./JiTMoE).
 
 
 ## 2. 📖 Introduction
@@ -23,7 +23,7 @@ Download [ImageNet](http://image-net.org/download) dataset, and place it in your
 
 ### 3.2 Installation
 
-- Following the installation of [DiffMoE](https://github.com/KlingTeam/DiffMoE) and [JiT](https://github.com/LTH14/JiT), respectively.
+Please follow the installations of [DiffMoE](https://github.com/KlingTeam/DiffMoE) and [JiT](https://github.com/LTH14/JiT), respectively.
 
 ### 3.3 Training
 
