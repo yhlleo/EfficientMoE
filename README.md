@@ -87,8 +87,8 @@ A large portion of codes in this repo is based on [DiffMoE](https://github.com/K
 
 ```
 @article{liu2025efficient,
-  title={Efficient Training of Diffusion Mixture-of-Experts Models: A Practical Recip},
-  author={Liu Yahui and Yue Yang and Zhang Jingyuan and Sun Chenxi and Zhou Yang and Zeng Wencong and Tang Ruiming and Zhou Guorui},
+  title={Efficient Training of Diffusion Mixture-of-Experts Models: A Practical Recipe},
+  author={Liu, Yahui and Yue, Yang and Zhang, Jingyuan and Sun, Chenxi and Zhou, Yang and Zeng, Wencong and Tang, Ruiming and Zhou, Guorui},
   journal={arXiv preprint arXiv:2512.01252},
   year={2025}
 }
