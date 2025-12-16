@@ -23,6 +23,14 @@ Download [ImageNet](http://image-net.org/download) dataset, and place it in your
 
 ### 3.2 Installation
 
+```
+pip install torch==2.6.0 torchvision==0.21.0
+pip install  peft==0.17.1
+pip install pexpect timm torchdiffeq tensorboard diffusers transformers
+pip install tensorflow==2.15.0
+pip install -e git+https://github.com/LTH14/torch-fidelity.git@master#egg=torch-fidelity
+```
+
 Please follow the installations of [DiffMoE](https://github.com/KlingTeam/DiffMoE) and [JiT](https://github.com/LTH14/JiT), respectively.
 
 ### 3.3 Training
