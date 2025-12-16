@@ -434,17 +434,3 @@ class DiT(nn.Module):
         eps = torch.cat([half_eps, half_eps], dim=0)
         return torch.cat([eps, rest], dim=1)
 
-
-
-if __name__ == "__main__":
-    x = torch.randn(4*128, 128)
-    dsmoe = DSMoE(
-        num_experts=16, 
-        hidden_size=128, 
-        moe_intermediate_size=256, 
-        n_group=2,
-        topk_group=2,
-        num_experts_per_tok=4
-    )
-
-    print(dsmoe(x).shape)
