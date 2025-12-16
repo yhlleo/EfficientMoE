@@ -407,25 +407,6 @@ def JiT_B_16_E16(**kwargs):
                moe_config=moe_config,
                **kwargs)
 
-def JiT_B_16_E48(**kwargs):
-    moe_config = {
-        "num_experts": 48,
-        "hidden_size": 768,
-        "moe_intermediate_size": 256,
-        "n_group": 1,
-        "topk_group": 1,
-        "num_experts_per_tok": 5,
-        "routed_scaling_factor": 2.5,
-        "interleave": True,
-        "use_shared_expert": True,
-        "proj_drop": 0.0,
-    }
-    return JiT(depth=12, hidden_size=768, num_heads=12,
-               bottleneck_dim=128, in_context_len=32, in_context_start=4, patch_size=16, 
-               moe_config=moe_config,
-               **kwargs)
-
-
 def JiT_B_32(**kwargs):
     return JiT(depth=12, hidden_size=768, num_heads=12,
                bottleneck_dim=128, in_context_len=32, in_context_start=4, patch_size=32, **kwargs)
