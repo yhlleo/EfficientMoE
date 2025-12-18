@@ -71,6 +71,7 @@ class DSNaiveMoE(nn.Module):
             final_hidden_states.index_add_(0, top_x, current_hidden_states.to(hidden_states.dtype))
         return final_hidden_states
 
+# refer to: https://github.com/huggingface/transformers/blob/main/src/transformers/models/deepseek_v3/modeling_deepseek_v3.py
 class TopkRouter(nn.Module):
     def __init__(self, hidden_size, n_routed_experts):
         super().__init__()
