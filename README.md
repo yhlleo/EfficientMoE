@@ -10,6 +10,7 @@
 
 ## 1. 🔥 Updates
 - __[2025.12.15]__: Release the codes of [DSMoE](./DSMoE) and [JiTMoE](./JiTMoE).
+- __[2025.12.21]__: Add the implementation of [Kimi Delta Attention](https://github.com/MoonshotAI/Kimi-Linear) (KDA) to [DSMoE](./DSMoE). 
 
 
 ## 2. 📖 Introduction
