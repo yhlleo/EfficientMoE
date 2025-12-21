@@ -31,3 +31,13 @@ sh ./scripts/train_3b_e16_dsmoe.sh 0
 # on Slave server
 sh ./scripts/train_3b_e16_dsmoe.sh 1
 ```
+
+- Training example of using KDA:
+
+```
+sh ./scripts/train_s_e16_dsmoe_kda.sh
+```
+
+![](./figures/mha-vs-kda.png)
+
+**Simply and directly replacing MHA blocks with KDA is not beneficial for the training convergence of diffusion-based DiT models.**

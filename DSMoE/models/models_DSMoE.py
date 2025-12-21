@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from timm.models.vision_transformer import PatchEmbed
-from .modules import get_2d_sincos_pos_embed, Attention, modulate, TimestepEmbedder, LabelEmbedder, FinalLayer, Mlp
+from .modules import get_2d_sincos_pos_embed, Attention, KDAttention, modulate, TimestepEmbedder, LabelEmbedder, FinalLayer, Mlp
 
 # https://huggingface.co/deepseek-ai/DeepSeek-V3/blob/main/modeling_deepseek.py
 class DeepseekV3RMSNorm(nn.Module):
@@ -71,7 +71,6 @@ class DSNaiveMoE(nn.Module):
             final_hidden_states.index_add_(0, top_x, current_hidden_states.to(hidden_states.dtype))
         return final_hidden_states
 
-# refer to: https://github.com/huggingface/transformers/blob/main/src/transformers/models/deepseek_v3/modeling_deepseek_v3.py
 class TopkRouter(nn.Module):
     def __init__(self, hidden_size, n_routed_experts):
         super().__init__()
@@ -171,7 +170,7 @@ class DiTBlock(nn.Module):
                  use_swiglu=False, MoE_config=None,
                  use_moe=False, rope_type="none", rope_max_pos=256, 
                  use_sinks=False, sliding_window=0, enable_gqa=False,
-                 norm_type="layernorm",
+                 norm_type="layernorm", use_kda=False, kda_kwargs=None, layer_idx=None,
                  **block_kwargs):
         super().__init__()
         self.norm_type = norm_type
@@ -182,10 +181,23 @@ class DiTBlock(nn.Module):
             self.norm1 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
             self.norm2 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
         
-        self.attn = Attention(hidden_size, num_heads=num_heads, head_dim=head_dim, qkv_bias=True, 
-            rope_type=rope_type, rope_max_pos=rope_max_pos, use_sinks=use_sinks, 
-            sliding_window=sliding_window, enable_gqa=enable_gqa, **block_kwargs)
-       
+        self.use_kda = use_kda
+        self.kda_kwargs = kda_kwargs
+        if self.use_kda:
+            if enable_gqa:
+                raise ValueError("KimiDeltaAttention wrapper does not support GQA in this implementation.")
+            self.attn = KDAttention(
+                hidden_size,
+                num_heads=num_heads,
+                head_dim=head_dim,
+                layer_idx=layer_idx,
+                **self.kda_kwargs,
+            )
+        else:
+            self.attn = Attention(hidden_size, num_heads=num_heads, head_dim=head_dim, qkv_bias=True, 
+                rope_type=rope_type, rope_max_pos=rope_max_pos, use_sinks=use_sinks, 
+                sliding_window=sliding_window, enable_gqa=enable_gqa, **block_kwargs)
+        
         mlp_hidden_dim = int(hidden_size * mlp_ratio)
         self.use_moe = use_moe
         
@@ -243,6 +255,8 @@ class DiT(nn.Module):
         use_sinks=False,
         sliding_window=0,
         enable_gqa=False,
+        use_kda=False,
+        kda_kwargs=None,
         norm_type="layernorm",
         MoE_config=None,
         init_MoeMLP=False,
@@ -271,6 +285,10 @@ class DiT(nn.Module):
         self.enable_gqa = enable_gqa
         if self.enable_gqa:
             print(f"Using GQA: {self.enable_gqa}")
+        self.use_kda = use_kda
+        self.kda_kwargs = {} if kda_kwargs is None else dict(kda_kwargs)
+        if self.use_kda:
+            print("Using KimiDeltaAttention in DiT blocks")
         self.norm_type = norm_type
         print(f"Norm type: {self.norm_type}")
 
@@ -285,7 +303,16 @@ class DiT(nn.Module):
         elif isinstance(self.MoE_config.skip_first2, int):
             for i in range(self.MoE_config.skip_first2):
                 use_moe_flag[i] = False
-        print(use_moe_flag)
+        print("MoE flags:", use_moe_flag)
+        
+        use_kda_flag = [False] * depth
+        if self.use_kda:
+            use_kda_flag = [True] * depth
+            for idx in range(depth):
+                if (idx + 1) % 4 == 0:
+                    use_kda_flag[idx] = False
+            #use_kda_flag = [True if i < depth/2 else False for i in range(depth)]
+        print("KDA flags:", use_kda_flag)
     
         self.CapacityPred_loss_weight = CapacityPred_loss_weight
 
@@ -302,7 +329,8 @@ class DiT(nn.Module):
                      use_swiglu=use_swiglu, MoE_config=MoE_config, use_moe=use_moe_flag[_], 
                      rope_type=self.rope_type, rope_max_pos=self.rope_max_pos, 
                      use_sinks=self.use_sinks, sliding_window=self.sliding_window,
-                     enable_gqa=self.enable_gqa, norm_type=self.norm_type) for _ in range(depth)
+                     enable_gqa=self.enable_gqa, norm_type=self.norm_type,
+                     use_kda=self.use_kda, kda_kwargs=self.kda_kwargs, layer_idx=_) for _ in range(depth)
         ])
         self.final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
         self.init_MoeMLP= MoE_config.init_MoeMLP
@@ -434,4 +462,6 @@ class DiT(nn.Module):
         half_eps = uncond_eps + cfg_scale * (cond_eps - uncond_eps)
         eps = torch.cat([half_eps, half_eps], dim=0)
         return torch.cat([eps, rest], dim=1)
+
+
 

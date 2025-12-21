@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.distributed as dist
 from itertools import repeat
 import collections.abc
+from fla.layers.kda import KimiDeltaAttention
 
 from .rope import (
     DeepseekV3RotaryEmbedding, 
@@ -15,6 +16,8 @@ from .rope import (
     _apply_rope_2d
 )
 from .attention_sinks import sdpa
+
+from typing import Optional
 
 # From PyTorch internals
 def _ntuple(n):
@@ -211,7 +214,60 @@ class Attention(nn.Module):
 def modulate(x, shift, scale):
     return x * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
 
+#################################################################################
+#                             Kimi Delta Attention                              #
+#################################################################################
 
+class KDAttention(nn.Module):
+    """
+    Thin wrapper to reuse KimiDeltaAttention with the same interface as Attention.
+    """
+    def __init__(
+            self,
+            dim: int,
+            num_heads: int = 8,
+            head_dim=None,
+            expand_v: float = 1.0,
+            num_v_heads: Optional[int] = None,
+            mode: str = "chunk",
+            use_short_conv: bool = True,
+            allow_neg_eigval: bool = False,
+            conv_size: int = 4,
+            conv_bias: bool = False,
+            norm_eps: float = 1e-5,
+            layer_idx: Optional[int] = None,
+    ) -> None:
+        super().__init__()
+        self.num_heads = num_heads
+        if head_dim is None:
+            assert dim % num_heads == 0, 'dim should be divisible by num_heads'
+            self.head_dim = dim // num_heads
+        else:
+            self.head_dim = head_dim
+
+        self.attn = KimiDeltaAttention(
+            hidden_size=dim,
+            expand_v=expand_v,
+            head_dim=self.head_dim,
+            num_heads=num_heads,
+            num_v_heads=num_v_heads,
+            mode=mode,
+            use_short_conv=use_short_conv,
+            allow_neg_eigval=allow_neg_eigval,
+            conv_size=conv_size,
+            conv_bias=conv_bias,
+            layer_idx=layer_idx,
+            norm_eps=norm_eps,
+        )
+
+    def forward(self, x: torch.Tensor, attention_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+        out, _, _ = self.attn(
+            hidden_states=x,
+            attention_mask=attention_mask,
+            use_cache=False,
+            output_attentions=False,
+        )
+        return out
 
 
 #################################################################################
